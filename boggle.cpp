@@ -94,6 +94,34 @@ std::set<std::string> boggle(const std::set<std::string>& dict, const std::set<s
 bool boggleHelper(const std::set<std::string>& dict, const std::set<std::string>& prefix, const std::vector<std::vector<char> >& board, 
 								   std::string word, std::set<std::string>& result, unsigned int r, unsigned int c, int dr, int dc)
 {
-//add your solution here!
-
+    // Check if we're still on the board
+    if (r >= board.size() || c >= board.size()) {
+        return false;
+    }
+    // Append the current letter to our word
+    std::string newWord = word + board[r][c]; 
+    // Check if the current word is a valid prefix
+    if (prefix.find(newWord) == prefix.end()) {
+        // Not a valid prefix, stop searching in this direction
+        return false;
+    }
+    // Flag to track if we found a valid word (either at this position or deeper)
+    bool foundWord = false;
+    // Check if this is a valid dictionary word
+    bool isValidWord = (dict.find(newWord) != dict.end());
+    if (isValidWord) {
+        foundWord = true;
+    }
+    // Continue search in the specified direction
+    bool foundLongerWord = boggleHelper(dict, prefix, board, newWord, result, r + dr, c + dc, dr, dc);
+    // If we found a longer word, we don't add this one
+    if (foundLongerWord) {
+        return true;
+    }
+    // If this is a valid word and we didn't find a longer one, add it to result
+    if (isValidWord) {
+        result.insert(newWord);
+    }
+    // Return true if we found a valid word at this position
+    return foundWord;
 }
